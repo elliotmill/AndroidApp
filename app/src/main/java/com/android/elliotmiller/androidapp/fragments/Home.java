@@ -1,30 +1,29 @@
 package com.android.elliotmiller.androidapp.fragments;
 
-import android.content.Context;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.elliotmiller.androidapp.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeListener} interface
- * to handle interaction events.
  * Use the {@link Home#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Home extends Fragment implements View.OnClickListener {
-    private EditText etName, etEmail;
-    private HomeListener mListener;
+public class Home extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String PARAM_NAME = "param_name";
+    private static final String PARAM_EMAIL = "param_email";
+
+    private String name;
+    private String email;
+
 
     public Home() {
         // Required empty public constructor
@@ -33,70 +32,37 @@ public class Home extends Fragment implements View.OnClickListener {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     * @param email User email
+     * @param name User name
      *
      * @return A new instance of fragment Home.
      */
-    public static Home newInstance() {
+    public static Home newInstance(String name, String email) {
         Home fragment = new Home();
         Bundle args = new Bundle();
+        args.putString(PARAM_NAME, name);
+        args.putString(PARAM_EMAIL, email);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            name = getArguments().getString(PARAM_NAME);
+            email = getArguments().getString(PARAM_EMAIL);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, null);
-        etEmail = view.findViewById(R.id.email);
-        etName = view.findViewById(R.id.name);
-        etEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mListener.onSubmitCredentials(etName.getText().toString(), etEmail.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
-        view.findViewById(R.id.btn_submit).setOnClickListener(this);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        ((TextView)view.findViewById(R.id.tv_name)).setText(this.name);
+        ((TextView)view.findViewById(R.id.tv_email)).setText(this.email);
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof HomeListener) {
-            mListener = (HomeListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement HomeListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_submit: {
-                mListener.onSubmitCredentials(etName.getText().toString(), etEmail.getText().toString());
-                break;
-            }
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface HomeListener {
-        void onSubmitCredentials(String name, String email);
-    }
 }

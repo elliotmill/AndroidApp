@@ -7,8 +7,9 @@ import android.util.Log;
 
 import com.android.elliotmiller.androidapp.R;
 import com.android.elliotmiller.androidapp.fragments.Home;
+import com.android.elliotmiller.androidapp.fragments.Login;
 
-public class MainActivity extends AppCompatActivity implements Home.HomeListener {
+public class MainActivity extends AppCompatActivity implements Login.HomeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +17,17 @@ public class MainActivity extends AppCompatActivity implements Home.HomeListener
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             FragmentTransaction ft = getFragmentTransaction();
-            ft.add(R.id.root_layout, Home.newInstance());
+            ft.add(R.id.root_layout, Login.newInstance());
             ft.commit();
         }
     }
 
     @Override
     public void onSubmitCredentials(String name, String email) {
-        Log.d(getClass().getSimpleName(), "Submit -> name: " + name + " email: " + email);
+        FragmentTransaction ft = getFragmentTransaction();
+        ft.replace(R.id.root_layout, Home.newInstance(name, email));
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     private FragmentTransaction getFragmentTransaction() {
